@@ -1,0 +1,58 @@
+#include <Servo.h>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+const String names[]= {"Charan ma'am","Ishika","Priya","Neeraj","Mehak","Gungun"};
+const String validCards[] = {"14001CAA5BF9", "14001C3791AE", "14001C9DC257", "14001C194859","53001CF88136","480031281C4D"};
+Servo myservo;
+int pos = 0;
+
+void setup() {
+Serial.begin(9600);  // put your setup code here, to run once:
+myservo.attach(9);
+myservo.write(0);
+// Initialize the LCD
+  lcd.init();
+  // Turn on the backlight (if available)
+  lcd.backlight();
+}
+
+void loop() {
+  delay(500);
+String str="";
+char s=' ';
+int j=0;
+  for(int i=0;i<12;i++)
+  {
+ if(Serial.available())
+ { s=(char)Serial.read();
+  
+ }
+ str=str+(String)s;
+ }
+ Serial.println(str);
+
+ for(j=0;j<=5;j++)
+ {
+  if((str==validCards[j])==true)
+  {lcd.clear();
+    lcd.setCursor(0, 0); // Set cursor to the beginning of the first line
+  lcd.print(names[j]);
+  lcd.setCursor(0, 1);
+  lcd.print("Lock: Open");
+  Serial.print("Yes");
+  myservo.write(90);
+  delay(5000);
+  myservo.write(0);
+ }
+ else{
+  
+ lcd.clear();
+ lcd.setCursor(0, 1); // Set cursor to the beginning of the second line
+  lcd.print("Lock: Closed");
+ }
+
+ }
+ 
+} // put your main code here, to run repeatedly:
